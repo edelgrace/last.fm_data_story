@@ -53,7 +53,7 @@ def main():
   artist_list = {}
 
   # open the last.fm dataset
-  file = open("edelgrace.csv", mode="r")
+  file = open("../data/edelgrace.csv", mode="r", encoding="utf8")
 
   # load the contents
   content = file.read()
