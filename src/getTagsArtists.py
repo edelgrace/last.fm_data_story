@@ -61,6 +61,7 @@ def main():
 
   # go through each line
   for line in content:
+    tags = ""
 
     # split the line
     data = line.strip().split("\t")
@@ -88,8 +89,6 @@ def main():
 
     # check if in artist list
     if artist in artist_list:
-
-
       if "toptags" in artist_list[artist][0]:
         tag_list = artist_list[artist][0]["toptags"]["tag"]    
 
