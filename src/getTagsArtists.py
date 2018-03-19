@@ -15,7 +15,7 @@ def mb_request(url):
   try:
     result = json.loads(request.text)
 
-  except Exception as e:
+  except Exception:
     print(request.text)
     
   return result
@@ -53,91 +53,60 @@ def main():
   artist_list = {}
 
   # open the last.fm dataset
-  file = open("data/erzadel.csv", mode="r", encoding="utf8")
+  file = open("../data/all_scrobbles_dates.csv", mode="r", encoding="utf8")
 
   # load the contents
   content = file.read()
   content = content.split("\n")
 
   # go through each line
-  for line in content:
-    tags = ""
+  for line in content[1:]:
 
     # split the line
-    data = line.strip().split("\t")
-
-    # check how many params
-    if len(data) <= 2:
-      print("NOT FOUND\t" + data[0])
-
-      continue
-
-    timestamp = data[0]
-    song = data[1]
-    artist = data[2]
-
-    try:
+    data = line.split("\t")
+    
+    if len(data) > 1:
+      date = data[0]
+      song = data[1]
+      artist = data[2]
       album = data[3]
-    except Exception as e:
-      album = ""
-
-    mbid = data[-1]
-
-    if mbid == album or mbid == artist:
-      print("NO MBID\t" + timestamp + "\t" + song + "\t" + artist + "\t" + album)
-      continue
+      song_mbid = data[4]
+      artist_mbid = data[5]
+      album_mbid = data[6]
 
     # check if in artist list
     if artist in artist_list:
-      if "toptags" in artist_list[artist][0]:
-        tag_list = artist_list[artist][0]["toptags"]["tag"]    
-
-        for tag in tag_list:
-          tags += tag["name"] + ","
-
-        tags = tags.strip(",")
-
-      if "gender" in artist_list[artist][1]:
-        gender = str(artist_list[artist][1]["gender"])
-      
-      if "country" in artist_list[artist][1]:
-        country = str(artist_list[artist][1]["country"])
-
-      if "type" in artist_list[artist][1]:
-        artist_type = str(artist_list[artist][1]["type"])
-
-      print("FOUND\t" + timestamp + "\t" + song + "\t" + artist + "\t" + album + "\t" + gender + "\t" + country + "\t" + artist_type + "\t" + tags) 
       continue
 
+    artist_info = ""
+
     # get the artist info
-    artist_info = get_artist(mbid)
+    if artist_mbid != "":
+      artist_info = get_artist(artist_mbid)
 
-    tags = ""
-    gender = ""
-    country = ""
-    artist_type = ""
+      if "error" in artist_info[0] or "error" in artist_info[1]:
+        print("MBID WRONG")
+        artist_info = ""
 
-    if "toptags" in artist_info[0]:
-      tag_list = artist_info[0]["toptags"]["tag"]    
-
-      for tag in tag_list:
-        tags += tag["name"] + ","
-
-      tags = tags.strip(",")
-
-    if "gender" in artist_info[1]:
-      gender = str(artist_info[1]["gender"])
-    
-    if "country" in artist_info[1]:
-      country = str(artist_info[1]["country"])
-
-    if "type" in artist_info[1]:
-      artist_type = str(artist_info[1]["type"])
-
-    print("FOUND\t" + timestamp + "\t" + song + "\t" + artist + "\t" + album + "\t" + gender + "\t" + country + "\t" + artist_type + "\t" + tags) 
+    else:
+      print("MBID NOT FOUND")
 
     artist_list[artist] = artist_info
-      
+
+    if artist_info != "":
+      new_line = ""
+      tags = ""
+
+      # tags
+      if "toptags" in artist_info[0]:
+
+        for tag in artist_info[0]["toptags"]["tag"]:
+          tags += tag["name"] + ","
+        
+        tags = tags.strip(",")
+        print(tags)
+
+
   return
 
 # run
