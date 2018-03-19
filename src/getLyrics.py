@@ -23,7 +23,7 @@ def getLyrics(filename, token):
     # create a new file
     old_filename = filename.split(".csv")
     new_filename = old_filename[0] + "_lyrics.csv"
-    new_file = open(new_filename, mode='w')
+    new_file = open(new_filename, mode='a')
 
     new_contents = ""
 
@@ -38,32 +38,32 @@ def getLyrics(filename, token):
         lyrics = lyrics.replace("\n","\\")
 
         new_line = title + "\t" + artist + "\t\"" + lyrics + "\"\n"
-        new_contents += new_line
+
+      else:
+        new_line = title + "\t" + artist + "\t\n"
   
-  except KeyboardInterrupt as e:
-    pass
-  finally:
-    # save the lyrics to file
-    new_file.write(new_contents)
-    return
+      new_file.write(new_line)
+
+  return
 
 
 def parseArgs():
   parser = argparse.ArgumentParser()
 
   parser.add_argument('token')
+  parser.add_argument('file')
 
   args = parser.parse_args()
 
-  return args.token
+  return args
 
 # main function
 def main():
   
-  token = parseArgs()
+  args = parseArgs()
 
-  getLyrics("../data/edelgrace.csv", token)
+  getLyrics(args.file, args.token)
 
-  getLyrics("../data/erzadel.csv", token)
+  return
 
 main()
