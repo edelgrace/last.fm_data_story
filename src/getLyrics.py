@@ -11,7 +11,7 @@ def getSongInfo(song):
 
 def getLyrics(filename, token):
   try:
-      
+
     # initialize api
     api = genius.Genius(token)
 
@@ -30,12 +30,16 @@ def getLyrics(filename, token):
     # loop through each song
     for song in songs:
       title, artist = getSongInfo(song)
-
+  
       result = api.search_song(title, artist)
       
       if not result is None:
-        new_line = title + "\t" + artist + "\t\"" + result.lyrics + "\"\n"
+        lyrics = result.lyrics
+        lyrics = lyrics.replace("\n","\\")
+
+        new_line = title + "\t" + artist + "\t\"" + lyrics + "\"\n"
         new_contents += new_line
+  
   except KeyboardInterrupt as e:
     pass
   finally:
