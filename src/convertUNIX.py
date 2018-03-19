@@ -14,10 +14,16 @@ def parse_csv(filename):
     line = line.split("\t")
     date = line[0]
 
+    new_line = ""
+
     try:
       new_date = datetime.fromtimestamp(float(int(date)))
       new_date = new_date.strftime('%Y-%m-%d %H:%M:%S')
-      print(new_date + "\t" + line[1] + "\t" + line[2])
+      
+      new_line += new_date
+      new_line += "\t".join(line[1:])
+
+      print(new_line)
 
     except IndexError:
       sys.stderr.write(str(len(line)))
