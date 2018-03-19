@@ -50,7 +50,7 @@ def get_artist(artist):
 
 # main loop
 def main():
-  artist_list = {}
+  artist_list = []
 
   # open the last.fm dataset
   file = open("../data/all_scrobbles_dates.csv", mode="r", encoding="utf8")
@@ -58,6 +58,9 @@ def main():
   # load the contents
   content = file.read()
   content = content.split("\n")
+
+  # open a new file
+  new_file = open ("../data/artists.csv", mode="a")
 
   # go through each line
   for line in content[1:]:
@@ -80,22 +83,22 @@ def main():
 
     artist_info = ""
 
+    new_line = ""
+
+    artist_list.append(artist)
+
     # get the artist info
     if artist_mbid != "":
       artist_info = get_artist(artist_mbid)
 
       if "error" in artist_info[0] or "error" in artist_info[1]:
-        print("MBID WRONG")
         artist_info = ""
 
-    else:
-      print("MBID NOT FOUND")
-
-    artist_list[artist] = artist_info
-
     if artist_info != "":
-      new_line = ""
       tags = ""
+      gender = artist_info[1]["gender"]
+      country = artist_info[1]["country"]
+      artist_type = artist_info[1]["type"]
 
       # tags
       if "toptags" in artist_info[0]:
@@ -104,9 +107,24 @@ def main():
           tags += tag["name"] + ","
         
         tags = tags.strip(",")
-        print(tags)
+
+      gender = gender if gender is not None else ""
+      country = country if country is not None else ""
+      artist_type = artist_type if artist_type is not None else ""
+
+      new_line = artist + "\t" + gender + "\t"
+      new_line += artist_type + "\t"
+      new_line += country + "\t"
+      new_line += tags + "\n"
 
 
+    else:
+      new_line = artist + "\t\t\t\t\n"
+    
+    new_file.write(new_line)
+    print(new_line)
+
+  new_file.close()
   return
 
 # run
