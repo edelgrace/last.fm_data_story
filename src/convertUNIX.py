@@ -19,10 +19,10 @@ def parse_csv(filename):
       new_date = new_date.strftime('%Y-%m-%d %H:%M:%S')
       print(new_date + "\t" + line[1] + "\t" + line[2])
 
-    except Exception as error:
-      sys.stderr.write(date)
-    except IndexError as err:
+    except IndexError:
       sys.stderr.write(str(len(line)))
+    except Exception:
+      sys.stderr.write(date)
       
 parser = argparse.ArgumentParser()
 parser.add_argument('filename')
