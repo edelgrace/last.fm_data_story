@@ -52,6 +52,8 @@ def parse_csv(filename):
 
   content = content.split("\n")
 
+  new_file = open("all_scrobbles_dates.csv", mode="a")
+
   for line in content:
     line = line.split("\t")
     date = line[0]
@@ -65,15 +67,16 @@ def parse_csv(filename):
       new_date = time_zone(new_date)
 
       if not valid_date(new_date):
-        print("INVALID")
-        print(new_date)
         continue
 
       new_date = new_date.strftime('%Y-%m-%d %H:%M:%S')
       
-      new_line += new_date
-      new_line += "\t".join(line[1:])
+      new_line += new_date + "\t"
+      new_line += "\t".join(line[1:]) + "\n"
 
+      print(new_line)
+
+      new_file.write(new_line)
 
     except IndexError as i:
       print(str(len(line)))
